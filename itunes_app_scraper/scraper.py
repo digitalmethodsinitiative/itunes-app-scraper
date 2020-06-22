@@ -6,7 +6,7 @@ import json
 import re
 
 from urllib.parse import quote_plus
-from util import AppStoreException, AppStoreCollections, AppStoreCategories, AppStoreMarkets
+from itunes_app_scraper.util import AppStoreException, AppStoreCollections, AppStoreCategories, AppStoreMarkets
 
 
 class AppStoreScraper:
@@ -142,7 +142,8 @@ class AppStoreScraper:
 		"""
 		Get app details for given app ID
 
-		:param int app_id:  App ID to retrieve details for
+		:param app_id:  App ID to retrieve details for. Can be either the
+		                numerical trackID or the textual BundleID.
 		:param str country:  Two-letter country code for the store to search in.
 		                     Defaults to 'nl'.
 

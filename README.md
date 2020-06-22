@@ -13,18 +13,19 @@ The following scrapes app details about all apps similar to the first result
 for the 'fortnite' search query:
 
 ```
-from itunes_app_scraper import AppStoreScraper
+from itunes_app_scraper.scraper import AppStoreScraper
 
 scraper = AppStoreScraper()
 results = scraper.get_app_ids_for_query("fortnite")
 similar = scraper.get_similar_app_ids_for_app(results[0])
 
 app_details = scraper.get_multiple_app_details(similar)
+print(list(app_details))
 ```
 
-Documentation is not available separately yet, but the code is relativelt 
+Documentation is not available separately yet, but the code is relatively
 simple and you can look in the `scraper.py` file to see what methods are 
-available.
+available and what their parameters are.
 
 ## License
 This scraper was developed by the 

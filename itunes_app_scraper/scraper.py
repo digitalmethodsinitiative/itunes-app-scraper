@@ -35,6 +35,8 @@ class AppStoreScraper:
 		url = "https://search.itunes.apple.com/WebObjects/MZStore.woa/wa/search?clientApplication=Software&media=software&term="
 		url += quote_plus(term)
 
+		amount = int(num) * int(page)
+
 		country = self.get_store_id_for_country(country)
 		headers = {
 			"X-Apple-Store-Front": "%s,24 t:native" % country,
@@ -46,7 +48,7 @@ class AppStoreScraper:
 		except json.JSONDecodeError:
 			raise AppStoreException("Could not parse app store response")
 
-		return [app["id"] for app in result["bubbles"][0]["results"][:num * page]]
+		return [app["id"] for app in result["bubbles"][0]["results"][:amount]]
 
 	def get_app_ids_for_collection(self, collection="", category="", num=50, country="nl"):
 		"""
@@ -95,8 +97,11 @@ class AppStoreScraper:
 		except json.JSONDecodeError:
 			raise AppStoreException("Could not parse app store response")
 
-		return [app["trackId"] for app in result["results"] if app["wrapperType"] == "software"]
-		pass
+		if "results" in result:
+			return [app["trackId"] for app in result["results"] if app["wrapperType"] == "software"]
+		else:
+			# probably an invalid developer ID
+			return []
 
 	def get_similar_app_ids_for_app(self, app_id, country="nl", lang="nl"):
 		"""
@@ -136,9 +141,7 @@ class AppStoreScraper:
 
 		return ids
 
-		pass
-
-	def get_app_details(self, app_id, country="nl"):
+	def get_app_details(self, app_id, country="nl", flatten=True):
 		"""
 		Get app details for given app ID
 
@@ -146,9 +149,14 @@ class AppStoreScraper:
 		                numerical trackID or the textual BundleID.
 		:param str country:  Two-letter country code for the store to search in.
 		                     Defaults to 'nl'.
+		:param bool flatten: The App Store response may by multi-dimensional.
+		                     This makes it hard to transform into e.g. a CSV,
+		                     so if this parameter is True (its default) the
+		                     response is flattened and any non-scalar values
+		                     are removed from the response.
 
 		:return dict:  App details, as returned by the app store. The result is
-		               not processed any further.
+		               not processed any further, unless `flatten` is True
 		"""
 		try:
 			app_id = int(app_id)
@@ -167,6 +175,14 @@ class AppStoreScraper:
 			app = result["results"][0]
 		except IndexError:
 			raise AppStoreException("No app found with ID %s" % app_id)
+
+		# 'flatten' app response
+		# responses are at most two-dimensional (array within array), so simply
+		# join any such values
+		if flatten:
+			for field in app:
+				if isinstance(app[field], list):
+					app[field] = ",".join(app[field])
 
 		return app
 

@@ -3,6 +3,7 @@ iTunes App Store Scraper
 """
 import requests
 import json
+import time
 import re
 
 from urllib.parse import quote_plus
@@ -50,7 +51,7 @@ class AppStoreScraper:
 
 		return [app["id"] for app in result["bubbles"][0]["results"][:amount]]
 
-	def get_app_ids_for_collection(self, collection="", category="", num=50, country="nl"):
+	def get_app_ids_for_collection(self, collection="", category="", num=50, country="nl", lang=""):
 		"""
 		Retrieve app IDs in given App Store collection
 
@@ -63,6 +64,7 @@ class AppStoreScraper:
 		:param int num:  Amount of results to return. Defaults to 50.
 		:param str country:  Two-letter country code for the store to search in.
 		                     Defaults to 'nl'.
+		:param str lang: Dummy argument for compatibility. Unused.
 
 		:return:  List of App IDs in collection.
 		"""
@@ -80,13 +82,14 @@ class AppStoreScraper:
 
 		return [entry["id"]["attributes"]["im:id"] for entry in result["feed"]["entry"]]
 
-	def get_app_ids_for_developer(self, developer_id, country="nl"):
+	def get_app_ids_for_developer(self, developer_id, country="nl", lang=""):
 		"""
 		Retrieve App IDs linked to given developer
 
 		:param int developer_id:  Developer ID
 		:param str country:  Two-letter country code for the store to search in.
 		                     Defaults to 'nl'.
+		:param str lang: Dummy argument for compatibility. Unused.
 
 		:return list:  List of App IDs linked to developer
 		"""
@@ -141,7 +144,7 @@ class AppStoreScraper:
 
 		return ids
 
-	def get_app_details(self, app_id, country="nl", flatten=True):
+	def get_app_details(self, app_id, country="nl", lang="", flatten=True):
 		"""
 		Get app details for given app ID
 
@@ -149,6 +152,7 @@ class AppStoreScraper:
 		                numerical trackID or the textual BundleID.
 		:param str country:  Two-letter country code for the store to search in.
 		                     Defaults to 'nl'.
+		:param str lang: Dummy argument for compatibility. Unused.
 		:param bool flatten: The App Store response may by multi-dimensional.
 		                     This makes it hard to transform into e.g. a CSV,
 		                     so if this parameter is True (its default) the
@@ -186,18 +190,20 @@ class AppStoreScraper:
 
 		return app
 
-	def get_multiple_app_details(self, app_ids, country="nl"):
+	def get_multiple_app_details(self, app_ids, country="nl", lang=""):
 		"""
 		Get app details for a list of app IDs
 
 		:param list app_id:  App IDs to retrieve details for
 		:param str country:  Two-letter country code for the store to search in.
 		                     Defaults to 'nl'.
+		:param str lang: Dummy argument for compatibility. Unused.
 
 		:return generator:  A list (via a generator) of app details
 		"""
 		for app_id in app_ids:
-			yield self.get_app_details(app_id)
+			time.sleep(1)
+			yield self.get_app_details(app_id, country=country, lang=lang)
 
 	def get_store_id_for_country(self, country):
 		"""

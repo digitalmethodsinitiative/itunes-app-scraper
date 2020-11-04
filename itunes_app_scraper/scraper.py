@@ -5,6 +5,7 @@ import requests
 import json
 import time
 import re
+from datetime import datetime
 
 from urllib.parse import quote_plus
 from itunes_app_scraper.util import AppStoreException, AppStoreCollections, AppStoreCategories, AppStoreMarkets
@@ -172,8 +173,14 @@ class AppStoreScraper:
 
 		try:
 			result = requests.get(url).json()
-		except json.JSONDecodeError:
-			raise AppStoreException("Could not parse app store response")
+		except Exception:
+			try:
+				# handle the retry here. 
+				# Take an extra sleep as back off and then retry the URL once. 
+				time.sleep(2)
+				result = requests.get(url).json()
+			except json.JSONDecodeError:
+				raise AppStoreException("Could not parse app store response for ID %s" % app_id)
 
 		try:
 			app = result["results"][0]
@@ -202,8 +209,12 @@ class AppStoreScraper:
 		:return generator:  A list (via a generator) of app details
 		"""
 		for app_id in app_ids:
-			time.sleep(1)
-			yield self.get_app_details(app_id, country=country, lang=lang)
+			try:
+				time.sleep(1)
+				yield self.get_app_details(app_id, country=country, lang=lang)
+			except AppStoreException as ase:
+				self._log_error(country, ase.message)
+				continue
 
 	def get_store_id_for_country(self, country):
 		"""
@@ -216,3 +227,16 @@ class AppStoreScraper:
 		default_store = 143452
 		country = country.upper()
 		return getattr(AppStoreMarkets, country) if hasattr(AppStoreMarkets, country) else default_store
+
+	def _log_error(self, app_store_country, message):
+		"""
+		Write the error to a local file to capture the error. 
+
+		:param str app_store_country: the country for the app store
+		:param str message: the error message to log
+		"""
+		app_log = "{0}_log.txt".format(app_store_country)
+		errortime = datetime.now().strftime('%Y%m%d_%H:%M:%S - ')
+		fh = open(app_log, "a")
+		fh.write("%s %s \n" % (errortime,message))
+		fh.close()

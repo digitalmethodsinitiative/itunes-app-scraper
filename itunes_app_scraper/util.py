@@ -1,6 +1,7 @@
 """
 App Store Scraper utility classes
 """
+import json
 
 class AppStoreCollections:
 	"""
@@ -24,6 +25,15 @@ class AppStoreCollections:
 	TOP_PAID_IOS = 'toppaidapplications'
 	TOP_PAID_IPAD = 'toppaidipadapplications'
 
+	def get_entries(self):
+		"""
+			Get the members and their names from the function
+		"""
+		method_names  = {}
+		for collection in dir(self):
+			if not collection.startswith('__') and str(collection) != "get_entries":
+				method_names[str(collection.replace('_', ' '))] = getattr(self, str(collection))
+		return json.dumps({'names': method_names})
 
 class AppStoreCategories:
 	"""
@@ -103,6 +113,15 @@ class AppStoreCategories:
 	UTILITIES = 6002
 	WEATHER = 6001
 
+	def get_entries(self):
+		"""
+			Get the members and their names from the function
+		"""
+		method_names  = {}
+		for collection in dir(self):
+			if not collection.startswith('__') and str(collection) != "get_entries":
+				method_names[str(collection.replace('_', ' '))] = getattr(self, str(collection))
+		return json.dumps({'names': method_names})
 
 class AppStoreMarkets:
 	"""

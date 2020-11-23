@@ -263,18 +263,8 @@ class AppStoreMarkets:
 	YE = 143571
 
 
-class AppStoreException(BaseException):
+class AppStoreException(Exception):
 	"""
 	Thrown when an error occurs in the App Store scraper
 	"""
-	def __init__(self, *args):
-		if args:
-			self.message = args[0]
-		else:
-			self.message = None
-
-	def __str__(self):
-		if self.message:
-			return "AppStoreException, {0}".format(self.message)
-		else:
-			return "AppStoreException raised"
+	pass

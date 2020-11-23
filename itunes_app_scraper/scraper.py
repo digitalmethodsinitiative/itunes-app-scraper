@@ -34,6 +34,9 @@ class AppStoreScraper:
 
 		:return list:  List of App IDs returned for search query
 		"""
+		if term is None or term == "":
+			raise AppStoreException("No term was given")
+
 		url = "https://search.itunes.apple.com/WebObjects/MZStore.woa/wa/search?clientApplication=Software&media=software&term="
 		url += quote_plus(term)
 
@@ -179,7 +182,7 @@ class AppStoreScraper:
 				# Take an extra sleep as back off and then retry the URL once. 
 				time.sleep(2)
 				result = requests.get(url).json()
-			except json.JSONDecodeError:
+			except Exception:
 				raise AppStoreException("Could not parse app store response for ID %s" % app_id)
 
 		try:
@@ -213,7 +216,7 @@ class AppStoreScraper:
 				time.sleep(1)
 				yield self.get_app_details(app_id, country=country, lang=lang)
 			except AppStoreException as ase:
-				self._log_error(country, ase.message)
+				self._log_error(country, str(ase))
 				continue
 
 	def get_store_id_for_country(self, country):

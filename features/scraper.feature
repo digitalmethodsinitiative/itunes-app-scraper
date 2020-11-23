@@ -29,3 +29,9 @@ Feature: scraper intial
      Given we have itunes scraper installed
       When we search for "10" apps
       Then the results length is "10"
+
+  Scenario: run a multiple app search with incorrect app id
+     Given we have itunes scraper installed
+     When we define an incorrect app id "872"
+      And we search for another "10" apps
+      Then the results length is "10"

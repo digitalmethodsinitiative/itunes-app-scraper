@@ -15,6 +15,7 @@ def step_impl(context, text):
 
 @then('the results length is "{json_len}"')
 def step_impl(context, json_len):
+    print(context.results)
     assert len(context.results) == int(json_len)
 
 @when('we search for result from mindful')
@@ -36,5 +37,14 @@ def step_impl(context, app_id):
 
 @when(u'we search for "{num_apps}" apps')
 def step_impl(context, num_apps):
-    apps = context.scraper.get_app_ids_for_query("mindful", country="gb", lang="en", num=10)
+    apps = context.scraper.get_app_ids_for_query("mindful", country="gb", lang="en", num=num_apps)
     context.results = list(context.scraper.get_multiple_app_details(apps, country="gb"))
+
+@when(u'we search for another "{num_apps}" apps')
+def step_impl(context, num_apps):
+    apps = context.app_id + context.scraper.get_app_ids_for_query("mindful", country="gb", lang="en", num=num_apps)
+    context.results = list(context.scraper.get_multiple_app_details(apps, country="gb"))
+
+@when(u'we define an incorrect app id "{app_id}"')
+def step_impl(context, app_id):
+    context.app_id = [int(app_id)]

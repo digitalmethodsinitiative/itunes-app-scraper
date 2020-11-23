@@ -227,9 +227,12 @@ class AppStoreScraper:
 		:param str country:  Two-letter country code for the store to search in.
 		                     Defaults to 'nl'.
 		"""
-		default_store = 143452
 		country = country.upper()
-		return getattr(AppStoreMarkets, country) if hasattr(AppStoreMarkets, country) else default_store
+
+		if hasattr(AppStoreMarkets, country):
+			return getattr(AppStoreMarkets, country)
+		else:
+			raise AppStoreException("Country code not found for {0}".format(country))
 
 	def _log_error(self, app_store_country, message):
 		"""

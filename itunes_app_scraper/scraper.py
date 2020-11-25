@@ -50,6 +50,8 @@ class AppStoreScraper:
 
 		try:
 			result = requests.get(url, headers=headers).json()
+		except ConnectionError as ce:
+			raise AppStoreException("Cannot connect to store: {0}".format(str(ce)))
 		except json.JSONDecodeError:
 			raise AppStoreException("Could not parse app store response")
 

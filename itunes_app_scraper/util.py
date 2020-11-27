@@ -1,6 +1,25 @@
 """
 App Store Scraper utility classes
 """
+import json
+
+class AppStoreUtils:
+	"""
+		Helper class to access the names of the other classes
+	"""
+
+	def get_entries(self, clazz_name):
+		"""
+			Get the members and their names from the function
+
+			:param object clazz_name: the class object be called. 
+			:returns object method_names: a JSON representation of the names.
+		"""
+		method_names  = {}
+		for collection in dir(clazz_name):
+			if not collection.startswith('__'):
+				method_names[str(collection.replace('_', ' '))] = getattr(clazz_name, str(collection))
+		return json.dumps({'names': method_names})
 
 class AppStoreCollections:
 	"""
@@ -23,7 +42,6 @@ class AppStoreCollections:
 	TOP_GROSSING_IPAD = 'topgrossingipadapplications'
 	TOP_PAID_IOS = 'toppaidapplications'
 	TOP_PAID_IPAD = 'toppaidipadapplications'
-
 
 class AppStoreCategories:
 	"""
@@ -102,7 +120,6 @@ class AppStoreCategories:
 	TRAVEL = 6003
 	UTILITIES = 6002
 	WEATHER = 6001
-
 
 class AppStoreMarkets:
 	"""
@@ -226,7 +243,7 @@ class AppStoreMarkets:
 	YE = 143571
 
 
-class AppStoreException(BaseException):
+class AppStoreException(Exception):
 	"""
 	Thrown when an error occurs in the App Store scraper
 	"""

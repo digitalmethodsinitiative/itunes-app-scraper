@@ -10,6 +10,9 @@ from datetime import datetime
 from urllib.parse import quote_plus
 from itunes_app_scraper.util import AppStoreException, AppStoreCollections, AppStoreCategories, AppStoreMarkets
 
+class Regex:
+    BAR = re.compile("we-star-bar-graph__bar__foreground-bar\" style=\"width: [\s\S]*?;\"><\/div") # we-star-bar-graph__bar__foreground-bar" style="width: 56%;"></div>
+
 
 class AppStoreScraper:
 	"""
@@ -235,6 +238,43 @@ class AppStoreScraper:
 			return getattr(AppStoreMarkets, country)
 		else:
 			raise AppStoreException("Country code not found for {0}".format(country))
+
+	def get_app_ratings(self, app_id):
+		"""
+		Get app ratings for given app ID
+
+		:param app_id:  App ID to retrieve details for. Can be either the
+		                numerical trackID or the textual BundleID.
+
+		:return dict:  App ratings in percents !!!, as scraped from the app store.
+		"""
+		url = "https://apps.apple.com/de/app/abc/id%s" % (app_id)
+
+		try:
+			dom = requests.get(url).text
+		except Exception:
+			try:
+				# handle the retry here.
+				# Take an extra sleep as back off and then retry the URL once.
+				time.sleep(2)
+				dom = requests.get(url).text
+			except Exception:
+				raise AppStoreException("Could not parse app store html response for ID %s" % app_id)
+
+		matches = Regex.BAR.findall(dom)
+
+		if len(matches) != 5:
+		    raise AppStoreException("Wrong number of stars, expected 5 but got %d" % len(matches))
+
+		dataset = {}
+		star = 1
+
+		for match in matches:
+			value = match.replace("we-star-bar-graph__bar__foreground-bar\" style=\"width: ", "").replace("%;\"></div", "")
+			dataset[star] = int(value)
+			star = star + 1
+
+		return dataset
 
 	def _log_error(self, app_store_country, message):
 		"""

@@ -15,8 +15,11 @@ def step_impl(context, text):
 
 @then('the results length is "{json_len}"')
 def step_impl(context, json_len):
-    print(context.results)
     assert len(context.results) == int(json_len)
+
+@then('the title is "{text}"')
+def step_impl(content, text):
+    assert content.results['trackName'] == text
 
 @when('we search for result from mindful')
 def step_impl(context):

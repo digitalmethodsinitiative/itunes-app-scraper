@@ -11,7 +11,7 @@ from urllib.parse import quote_plus
 from itunes_app_scraper.util import AppStoreException, AppStoreCollections, AppStoreCategories, AppStoreMarkets
 
 class Regex:
-    BAR = re.compile("we-star-bar-graph__bar__foreground-bar\" style=\"width: [\s\S]*?;\"><\/div") # we-star-bar-graph__bar__foreground-bar" style="width: 56%;"></div>
+    STARS = re.compile("<span class=\"total\">[\s\S]*?</span>")
 
 
 class AppStoreScraper:
@@ -246,35 +246,63 @@ class AppStoreScraper:
 		:param app_id:  App ID to retrieve details for. Can be either the
 		                numerical trackID or the textual BundleID.
 
-		:return dict:  App ratings in percents !!!, as scraped from the app store.
+		:return dict:  App ratings, as scraped from the app store.
 		"""
-		url = "https://apps.apple.com/de/app/abc/id%s" % (app_id)
+		dataset = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 }
+		countries = ['au', 'at', 'be', 'ch', 'cy', 'cz', 'de', 'dk', 'es', 'fr', 'gb', 'gr', 'ie', 'it', 'hr', 'hu', 'nl', 'lu', 'lt', 'pl', 'ro', 'se', 'sk', 'si', 'sr', 'tr', 'ua', 'us']
 
-		try:
-			dom = requests.get(url).text
-		except Exception:
+		for country in countries:
+			url = "https://itunes.apple.com/%s/customer-reviews/id%s?displayable-kind=11" % (country, app_id)
+			store_id = self.get_store_id_for_country(country)
+			headers = { 'X-Apple-Store-Front': '%s,12 t:native' % store_id }
+
 			try:
-				# handle the retry here.
-				# Take an extra sleep as back off and then retry the URL once.
-				time.sleep(2)
-				dom = requests.get(url).text
+				result = requests.get(url, headers=headers).text
 			except Exception:
-				raise AppStoreException("Could not parse app store html response for ID %s" % app_id)
+				try:
+					# handle the retry here.
+					# Take an extra sleep as back off and then retry the URL once.
+					time.sleep(2)
+					result = requests.get(url, headers=headers).text
+				except Exception:
+					raise AppStoreException("Could not parse app store rating response for ID %s" % app_id)
 
-		matches = Regex.BAR.findall(dom)
+			# print(result)
 
-		if len(matches) != 5:
-		    raise AppStoreException("Wrong number of stars, expected 5 but got %d" % len(matches))
+			ratings = self._parse_rating(result)
+			# print(ratings)
 
-		dataset = {}
-		star = 1
+			if ratings is not None:
+				dataset[1] = dataset[1] + ratings[1]
+				dataset[2] = dataset[2] + ratings[2]
+				dataset[3] = dataset[3] + ratings[3]
+				dataset[4] = dataset[4] + ratings[4]
+				dataset[5] = dataset[5] + ratings[5]
 
-		for match in matches:
-			value = match.replace("we-star-bar-graph__bar__foreground-bar\" style=\"width: ", "").replace("%;\"></div", "")
-			dataset[star] = int(value)
-			star = star + 1
+		# print("-----------------------")
+		# print('%d ratings' % (dataset[1] + dataset[2] + dataset[3] + dataset[4] + dataset[5]))
+		# print(dataset)
 
 		return dataset
+
+	def _parse_rating(self, text):
+		matches = Regex.STARS.findall(text)
+
+		if len(matches) != 5:
+		    # raise AppStoreException("Cant get stars - expected 5 - but got %d" % len(matches))
+		    return None
+
+		ratings = {}
+		star = 5
+
+		for match in matches:
+			value = match
+			value = value.replace("<span class=\"total\">", "")
+			value = value.replace("</span>", "")
+			ratings[star] = int(value)
+			star = star - 1
+
+		return ratings
 
 	def _log_error(self, app_store_country, message):
 		"""

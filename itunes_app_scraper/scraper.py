@@ -257,8 +257,8 @@ class AppStoreScraper:
 		elif isinstance(countries, str): # only a string provided
 			countries = [countries]
 		else:
-            countries = countries
-
+			countries = countries
+		
 		for country in countries:
 			url = "https://itunes.apple.com/%s/customer-reviews/id%s?displayable-kind=11" % (country, app_id)
 			store_id = self.get_store_id_for_country(country)

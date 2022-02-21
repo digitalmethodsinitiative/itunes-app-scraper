@@ -239,22 +239,25 @@ class AppStoreScraper:
 		else:
 			raise AppStoreException("Country code not found for {0}".format(country))
 
-	def get_app_ratings(self, app_id, country=None):
+	def get_app_ratings(self, app_id, countries=None):
 		"""
 		Get app ratings for given app ID
 
 		:param app_id:  App ID to retrieve details for. Can be either the
 		                numerical trackID or the textual BundleID.
-		:country:       country (lowercase, 2 letter code) to generate the rating for
-		                if left empty, it default to mostly european countries
+		:countries:     list of countries (lowercase, 2 letter code) or single country (e.g. 'de')
+		                to generate the rating for
+		                if left empty, it defaults to mostly european countries (see below)
 
 		:return dict:  App ratings, as scraped from the app store.
 		"""
 		dataset = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 }
 		if country is None:
 			countries = ['au', 'at', 'be', 'ch', 'cy', 'cz', 'de', 'dk', 'es', 'fr', 'gb', 'gr', 'ie', 'it', 'hr', 'hu', 'nl', 'lu', 'lt', 'pl', 'ro', 'se', 'sk', 'si', 'sr', 'tr', 'ua', 'us']
-		elif isinstance(country, str):
-			countries = [country]
+		elif isinstance(countries, str): # only a string provided
+			countries = [countries]
+		else:
+            countries = countries
 
 		for country in countries:
 			url = "https://itunes.apple.com/%s/customer-reviews/id%s?displayable-kind=11" % (country, app_id)
@@ -272,10 +275,7 @@ class AppStoreScraper:
 				except Exception:
 					raise AppStoreException("Could not parse app store rating response for ID %s" % app_id)
 
-			# print(result)
-
 			ratings = self._parse_rating(result)
-			# print(ratings)
 
 			if ratings is not None:
 				dataset[1] = dataset[1] + ratings[1]
@@ -284,6 +284,7 @@ class AppStoreScraper:
 				dataset[4] = dataset[4] + ratings[4]
 				dataset[5] = dataset[5] + ratings[5]
 
+        # debug
 		# print("-----------------------")
 		# print('%d ratings' % (dataset[1] + dataset[2] + dataset[3] + dataset[4] + dataset[5]))
 		# print(dataset)

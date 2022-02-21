@@ -239,20 +239,22 @@ class AppStoreScraper:
 		else:
 			raise AppStoreException("Country code not found for {0}".format(country))
 
-	def get_app_ratings(self, app_id, countries=None):
+	def get_app_ratings(self, app_id, country=None):
 		"""
 		Get app ratings for given app ID
 
 		:param app_id:  App ID to retrieve details for. Can be either the
 		                numerical trackID or the textual BundleID.
+		:country:       country (lowercase, 2 letter code) to generate the rating for
+		                if left empty, it default to mostly european countries
 
 		:return dict:  App ratings, as scraped from the app store.
 		"""
 		dataset = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 }
-		if countries is None:
+		if country is None:
 			countries = ['au', 'at', 'be', 'ch', 'cy', 'cz', 'de', 'dk', 'es', 'fr', 'gb', 'gr', 'ie', 'it', 'hr', 'hu', 'nl', 'lu', 'lt', 'pl', 'ro', 'se', 'sk', 'si', 'sr', 'tr', 'ua', 'us']
-		elif isinstance(countries, str):
-			countries = [countries]
+		elif isinstance(country, str):
+			countries = [country]
 
 		for country in countries:
 			url = "https://itunes.apple.com/%s/customer-reviews/id%s?displayable-kind=11" % (country, app_id)

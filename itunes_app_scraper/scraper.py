@@ -168,7 +168,8 @@ class AppStoreScraper:
 		                     response is flattened and any non-scalar values
 		                     are removed from the response.
 		:param int sleep: Seconds to sleep before request to prevent being
-						  temporary blocked. Defaults to None.
+						  temporary blocked if there are many requests in a
+						  short time. Defaults to None.
 
 		:return dict:  App details, as returned by the app store. The result is
 		               not processed any further, unless `flatten` is True
@@ -217,8 +218,9 @@ class AppStoreScraper:
 		:param str country:  Two-letter country code for the store to search in.
 		                     Defaults to 'nl'.
 		:param str lang: Dummy argument for compatibility. Unused.
-		:param int sleep: Seconds to sleep before each request to prevent being
-						  temporary blocked. Defaults to 1.
+		:param int sleep: Seconds to sleep before request to prevent being
+						  temporary blocked if there are many requests in a
+						  short time. Defaults to 1.
 
 		:return generator:  A list (via a generator) of app details
 		"""
@@ -253,8 +255,9 @@ class AppStoreScraper:
 		:countries:     List of countries (lowercase, 2 letter code) or single country (e.g. 'de')
 		                to generate the rating for
 		                if left empty, it defaults to mostly european countries (see below)
-		:param int sleep: Seconds to sleep before each request to prevent being
-						  temporary blocked. Defaults to 1.
+		:param int sleep: Seconds to sleep before request to prevent being
+						  temporary blocked if there are many requests in a
+						  short time. Defaults to 1.
 
 		:return dict:  App ratings, as scraped from the app store.
 		"""

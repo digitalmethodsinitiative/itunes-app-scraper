@@ -153,7 +153,7 @@ class AppStoreScraper:
 
 		return ids
 
-	def get_app_details(self, app_id, country="nl", lang="", flatten=True):
+	def get_app_details(self, app_id, country="nl", lang="", flatten=True, sleep=None):
 		"""
 		Get app details for given app ID
 
@@ -167,6 +167,9 @@ class AppStoreScraper:
 		                     so if this parameter is True (its default) the
 		                     response is flattened and any non-scalar values
 		                     are removed from the response.
+		:param int sleep: Seconds to sleep before request to prevent being
+						  temporary blocked if there are many requests in a
+						  short time. Defaults to None.
 
 		:return dict:  App details, as returned by the app store. The result is
 		               not processed any further, unless `flatten` is True
@@ -180,6 +183,8 @@ class AppStoreScraper:
 		url = "https://itunes.apple.com/lookup?%s=%s&country=%s&entity=software" % (id_field, app_id, country)
 
 		try:
+			if sleep is not None:
+				time.sleep(sleep)
 			result = requests.get(url).json()
 		except Exception:
 			try:
@@ -205,7 +210,7 @@ class AppStoreScraper:
 
 		return app
 
-	def get_multiple_app_details(self, app_ids, country="nl", lang=""):
+	def get_multiple_app_details(self, app_ids, country="nl", lang="", sleep=1):
 		"""
 		Get app details for a list of app IDs
 
@@ -213,13 +218,15 @@ class AppStoreScraper:
 		:param str country:  Two-letter country code for the store to search in.
 		                     Defaults to 'nl'.
 		:param str lang: Dummy argument for compatibility. Unused.
+		:param int sleep: Seconds to sleep before request to prevent being
+						  temporary blocked if there are many requests in a
+						  short time. Defaults to 1.
 
 		:return generator:  A list (via a generator) of app details
 		"""
 		for app_id in app_ids:
 			try:
-				time.sleep(1)
-				yield self.get_app_details(app_id, country=country, lang=lang)
+				yield self.get_app_details(app_id, country=country, lang=lang, sleep=sleep)
 			except AppStoreException as ase:
 				self._log_error(country, str(ase))
 				continue
@@ -239,15 +246,18 @@ class AppStoreScraper:
 		else:
 			raise AppStoreException("Country code not found for {0}".format(country))
 
-	def get_app_ratings(self, app_id, countries=None):
+	def get_app_ratings(self, app_id, countries=None, sleep=1):
 		"""
 		Get app ratings for given app ID
 
 		:param app_id:  App ID to retrieve details for. Can be either the
 		                numerical trackID or the textual BundleID.
-		:countries:     list of countries (lowercase, 2 letter code) or single country (e.g. 'de')
+		:countries:     List of countries (lowercase, 2 letter code) or single country (e.g. 'de')
 		                to generate the rating for
 		                if left empty, it defaults to mostly european countries (see below)
+		:param int sleep: Seconds to sleep before request to prevent being
+						  temporary blocked if there are many requests in a
+						  short time. Defaults to 1.
 
 		:return dict:  App ratings, as scraped from the app store.
 		"""
@@ -265,6 +275,8 @@ class AppStoreScraper:
 			headers = { 'X-Apple-Store-Front': '%s,12 t:native' % store_id }
 
 			try:
+				if sleep is not None:
+					time.sleep(sleep)
 				result = requests.get(url, headers=headers).text
 			except Exception:
 				try:
@@ -295,8 +307,8 @@ class AppStoreScraper:
 		matches = Regex.STARS.findall(text)
 
 		if len(matches) != 5:
-		    # raise AppStoreException("Cant get stars - expected 5 - but got %d" % len(matches))
-		    return None
+			# raise AppStoreException("Cant get stars - expected 5 - but got %d" % len(matches))
+			return None
 
 		ratings = {}
 		star = 5

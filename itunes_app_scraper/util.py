@@ -248,3 +248,46 @@ class AppStoreException(Exception):
 	Thrown when an error occurs in the App Store scraper
 	"""
 	pass
+
+
+COUNTRIES = [
+    'ad', # Andorra
+    'at', # Austria
+    'be', # Belgium
+    'ca', # Canada
+    'ch', # Switzerland
+    'cy', # Cyprus
+    'cz', # Czechia
+    'de', # Germany
+    'dk', # Denmark
+    'ee', # Estonia
+    'es', # Spain
+    'fi', # Finland
+    'fr', # France
+    'gb', # Great Britain
+    'gi', # Gibraltar
+    'gr', # Greece
+    'hr', # Hungary
+    'ie', # Ireland
+    'im', # Isle of Man
+    'is', # Iceland
+    'it', # Italy
+    'lu', # Luxembourg
+    'lv', # Latvia
+    'mc', # Monaco
+    'me', # Montenegro
+    'mt', # Malta
+    'nl', # Netherlands
+    'no', # Norway
+    'pl', # Poland
+    'pt', # Portugal
+    'ro', # Romania
+    'rs', # Serbia
+    'se', # Sweden
+    'si', # Slovenia
+    'sk', # Slovakia
+    'sr', # ???
+    'tr', # Turkey
+    'ua', # Ukraine
+    'us', # United States of America
+]

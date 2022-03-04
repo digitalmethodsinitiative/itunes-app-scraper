@@ -8,7 +8,7 @@ import re
 from datetime import datetime
 
 from urllib.parse import quote_plus
-from itunes_app_scraper.util import AppStoreException, AppStoreCollections, AppStoreCategories, AppStoreMarkets
+from itunes_app_scraper.util import AppStoreException, AppStoreCollections, AppStoreCategories, AppStoreMarkets, COUNTRIES
 
 class Regex:
     STARS = re.compile("<span class=\"total\">[\s\S]*?</span>")
@@ -263,7 +263,7 @@ class AppStoreScraper:
 		"""
 		dataset = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 }
 		if countries is None:
-			countries = ['au', 'at', 'be', 'ch', 'cy', 'cz', 'de', 'dk', 'es', 'fr', 'gb', 'gr', 'ie', 'it', 'hr', 'hu', 'nl', 'lu', 'lt', 'pl', 'ro', 'se', 'sk', 'si', 'sr', 'tr', 'ua', 'us']
+			countries = COUNTRIES
 		elif isinstance(countries, str): # only a string provided
 			countries = [countries]
 		else:
@@ -297,9 +297,9 @@ class AppStoreScraper:
 				dataset[5] = dataset[5] + ratings[5]
 
         # debug
-		# print("-----------------------")
-		# print('%d ratings' % (dataset[1] + dataset[2] + dataset[3] + dataset[4] + dataset[5]))
-		# print(dataset)
+		#,print("-----------------------")
+		#,print('%d ratings' % (dataset[1] + dataset[2] + dataset[3] + dataset[4] + dataset[5]))
+		#,print(dataset)
 
 		return dataset
 

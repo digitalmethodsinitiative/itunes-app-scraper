@@ -189,7 +189,7 @@ class AppStoreScraper:
 
 		try:
 			app = result["results"][0]
-		except IndexError:
+		except (KeyError, IndexError):
 			raise AppStoreException("No app found with ID %s" % app_id)
 
 		# 'flatten' app response

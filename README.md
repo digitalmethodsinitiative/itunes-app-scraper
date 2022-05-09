@@ -27,6 +27,18 @@ Documentation is not available separately yet, but the code is relatively
 simple and you can look in the `scraper.py` file to see what methods are 
 available and what their parameters are.
 
+## Sources of Data:
+| Query	 | Source |	URL base |
+| ------- | ------ | ------ |
+| App |	[Affiliates API](https://developer.apple.com/library/archive/documentation/AudioVideo/Conceptual/iTuneSearchAPI/index.html) | https://itunes.apple.com/lookup? |
+| Search	| Old Affiliates?	| https://search.itunes.apple.com/WebObjects/MZStore.woa/wa/search? |
+| Developer	| [Affiliates API](https://developer.apple.com/library/archive/documentation/AudioVideo/Conceptual/iTuneSearchAPI/index.html) | https://itunes.apple.com/lookup? |
+| List	| [Old Affiliates](https://images.apple.com/itunesaffiliates/guides/AffiliatesSearch_2.7(JSON).pdf) |	http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/ws/RSS/ |
+| Similar | iTunes store scrape HTML |	https://itunes.apple.com/us/app/app/ |
+| Full Details	| [Affiliates API](https://developer.apple.com/library/archive/documentation/AudioVideo/Conceptual/iTuneSearchAPI/index.html) | https://itunes.apple.com/lookup? |
+
+
+
 ## License
 This scraper was developed by the 
 [Digital Methods Initiative](https://digitalmethods.net), and is distributed

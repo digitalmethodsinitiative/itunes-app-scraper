@@ -153,7 +153,7 @@ class AppStoreScraper:
 
 		return ids
 
-	def get_app_details(self, app_id, country="nl", lang="", flatten=True, sleep=None):
+	def get_app_details(self, app_id, country="nl", lang="", flatten=True, sleep=None, force=False):
 		"""
 		Get app details for given app ID
 
@@ -180,7 +180,13 @@ class AppStoreScraper:
 		except ValueError:
 			id_field = "bundleId"
 
-		url = "https://itunes.apple.com/lookup?%s=%s&country=%s&entity=software" % (id_field, app_id, country)
+		if force:
+		    # this will by-pass the serverside caching
+		    import secrets
+		    timestamp = secrets.token_urlsafe(8)
+		    url = "https://itunes.apple.com/lookup?%s=%s&country=%s&entity=software&timestamp=%s" % (id_field, app_id, country, timestamp)
+        else:
+		    url = "https://itunes.apple.com/lookup?%s=%s&country=%s&entity=software" % (id_field, app_id, country)
 
 		try:
 			if sleep is not None:

@@ -170,6 +170,8 @@ class AppStoreScraper:
 		:param int sleep: Seconds to sleep before request to prevent being
 						  temporary blocked if there are many requests in a
 						  short time. Defaults to None.
+		:param bool force:  by-passes the server side caching by adding a timestamp
+		                    to the request (default is False)
 
 		:return dict:  App details, as returned by the app store. The result is
 		               not processed any further, unless `flatten` is True

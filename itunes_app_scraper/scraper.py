@@ -183,12 +183,12 @@ class AppStoreScraper:
 			id_field = "bundleId"
 
 		if force:
-		    # this will by-pass the serverside caching
-		    import secrets
-		    timestamp = secrets.token_urlsafe(8)
-		    url = "https://itunes.apple.com/lookup?%s=%s&country=%s&entity=software&timestamp=%s" % (id_field, app_id, country, timestamp)
-        else:
-		    url = "https://itunes.apple.com/lookup?%s=%s&country=%s&entity=software" % (id_field, app_id, country)
+			# this will by-pass the serverside caching
+			import secrets
+			timestamp = secrets.token_urlsafe(8)
+			url = "https://itunes.apple.com/lookup?%s=%s&country=%s&entity=software&timestamp=%s" % (id_field, app_id, country, timestamp)
+		else:
+			url = "https://itunes.apple.com/lookup?%s=%s&country=%s&entity=software" % (id_field, app_id, country)
 
 		try:
 			if sleep is not None:
@@ -218,7 +218,7 @@ class AppStoreScraper:
 
 		return app
 
-	def get_multiple_app_details(self, app_ids, country="nl", lang="", sleep=1):
+	def get_multiple_app_details(self, app_ids, country="nl", lang="", sleep=1, force=False):
 		"""
 		Get app details for a list of app IDs
 
@@ -229,12 +229,14 @@ class AppStoreScraper:
 		:param int sleep: Seconds to sleep before request to prevent being
 						  temporary blocked if there are many requests in a
 						  short time. Defaults to 1.
+		:param bool force:  by-passes the server side caching by adding a timestamp
+		                    to the request (default is False)
 
 		:return generator:  A list (via a generator) of app details
 		"""
 		for app_id in app_ids:
 			try:
-				yield self.get_app_details(app_id, country=country, lang=lang, sleep=sleep)
+				yield self.get_app_details(app_id, country=country, lang=lang, sleep=sleep, force=force)
 			except AppStoreException as ase:
 				self._log_error(country, str(ase))
 				continue

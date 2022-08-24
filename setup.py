@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="itunes-app-scraper-dmi",
-    version="0.9.4",
+    version="0.9.5",
     author="Digital Methods Initiative",
     author_email="stijn.peeters@uva.nl",
     description="A lightweight iTunes App Store scraper",

@@ -154,7 +154,7 @@ class AppStoreScraper:
 
 		return ids
 
-	def get_app_details(self, app_id, country="nl", lang="", flatten=True, sleep=None, force=False):
+	def get_app_details(self, app_id, country="nl", lang="", add_ratings=False, flatten=True, sleep=None, force=False):
 		"""
 		Get app details for given app ID
 
@@ -209,6 +209,15 @@ class AppStoreScraper:
 		except (KeyError, IndexError):
 			raise AppStoreException("No app found with ID %s" % app_id)
 
+		if add_ratings:
+			try:
+				ratings = self.get_app_ratings(app_id, countries=country)
+				app['user_ratings'] = ratings
+			except AppStoreException:
+				# Return some details
+				self._log_error(country, 'Unable to collect ratings for %s' % str(app_id))
+				app['user_ratings'] = 'Error; unable to collect ratings'
+
 		# 'flatten' app response
 		# responses are at most two-dimensional (array within array), so simply
 		# join any such values
@@ -216,10 +225,12 @@ class AppStoreScraper:
 			for field in app:
 				if isinstance(app[field], list):
 					app[field] = ",".join(app[field])
+				elif isinstance(app[field], dict):
+					app[field] = ", ".join(["%s star: %s" % (key, value) for key,value in app[field].items()])
 
 		return app
 
-	def get_multiple_app_details(self, app_ids, country="nl", lang="", sleep=1, force=False):
+	def get_multiple_app_details(self, app_ids, country="nl", lang="", add_ratings=False, sleep=1, force=False):
 		"""
 		Get app details for a list of app IDs
 
@@ -237,7 +248,7 @@ class AppStoreScraper:
 		"""
 		for app_id in app_ids:
 			try:
-				yield self.get_app_details(app_id, country=country, lang=lang, sleep=sleep, force=force)
+				yield self.get_app_details(app_id, country=country, lang=lang, add_ratings=add_ratings, sleep=sleep, force=force)
 			except AppStoreException as ase:
 				self._log_error(country, str(ase))
 				continue

@@ -27,20 +27,18 @@ def test_no_invalid_id_in_multiple_is_empty():
 def test_no_invalid_id_in_multiple_writes_log():
     scraper = AppStoreScraper()
     scraper.get_multiple_app_details(['872'])
-    assert os.path.exists("nl_log.txt")
-    fh = open('nl_log.txt')
+    assert os.path.exists("log/nl_log.txt")
+    fh = open('log/nl_log.txt')
     assert "No app found with ID 872" in fh.read()
     fh.close()
-    os.remove('nl_log.txt')
 
 def test_log_file_write_message():
     scraper = AppStoreScraper()
     scraper._log_error("gb","test")
-    assert os.path.exists("gb_log.txt")
-    fh = open('gb_log.txt')
+    assert os.path.exists("log/gb_log.txt")
+    fh = open('log/gb_log.txt')
     assert "test" in fh.read()
     fh.close()
-    os.remove('gb_log.txt')
 
 def test_country_code_does_exist():
     scraper = AppStoreScraper()

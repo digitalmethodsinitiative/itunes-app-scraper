@@ -1,4 +1,4 @@
-Feature: scraper intial
+Feature: scraper initial
 
   Scenario: run a simple search
      Given we have itunes scraper installed
@@ -8,7 +8,7 @@ Feature: scraper intial
   Scenario: run a similarity search
      Given we have itunes scraper installed
       When we search for result from mindful
-      Then the scraper will return "50" results
+      Then the scraper will return "15" results
 
   Scenario: run a collections search
      Given we have itunes scraper installed
@@ -18,7 +18,7 @@ Feature: scraper intial
   Scenario: run a developer search
      Given we have itunes scraper installed
       When we search for the developer 384434796
-      Then the scraper will return "2" results
+      Then the scraper will return "1" results
 
   Scenario: run an app search
      Given we have itunes scraper installed
@@ -32,6 +32,11 @@ Feature: scraper intial
 
   Scenario: run a multiple app search with incorrect app id
      Given we have itunes scraper installed
-     When we define an incorrect app id "872"
-      And we search for another "10" apps
+      When we define an incorrect app id "872"
+       And we search for another "10" apps
       Then the results length is "10"
+
+  Scenario: read app details for pokemon
+     Given we have itunes scraper installed
+      When we search for the app with id "1094591345"
+      Then the title is "Pokémon GO"

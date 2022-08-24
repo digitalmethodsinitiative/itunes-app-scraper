@@ -12,7 +12,7 @@ from urllib.parse import quote_plus
 from itunes_app_scraper.util import AppStoreException, AppStoreCollections, AppStoreCategories, AppStoreMarkets, COUNTRIES
 
 class Regex:
-    STARS = re.compile("<span class=\"total\">[\s\S]*?</span>")
+	STARS = re.compile(r"<span class=\"total\">[\s\S]*?</span>")
 
 
 class AppStoreScraper:
@@ -197,8 +197,8 @@ class AppStoreScraper:
 			result = requests.get(url).json()
 		except Exception:
 			try:
-				# handle the retry here. 
-				# Take an extra sleep as back off and then retry the URL once. 
+				# handle the retry here.
+				# Take an extra sleep as back off and then retry the URL once.
 				time.sleep(2)
 				result = requests.get(url).json()
 			except Exception:

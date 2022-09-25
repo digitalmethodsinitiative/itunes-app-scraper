@@ -35,6 +35,7 @@ class AppStoreScraper:
 		:param str country:  Two-letter country code of store to search in,
 		                     default 'nl'
 		:param str lang:  Language code to search with, default 'nl'
+		:param int timeout: Seconds to wait for response before stopping.
 
 		:return list:  List of App IDs returned for search query
 		"""
@@ -75,6 +76,7 @@ class AppStoreScraper:
 		:param str country:  Two-letter country code for the store to search in.
 		                     Defaults to 'nl'.
 		:param str lang: Dummy argument for compatibility. Unused.
+		:param int timeout: Seconds to wait for response before stopping.
 
 		:return:  List of App IDs in collection.
 		"""
@@ -100,6 +102,7 @@ class AppStoreScraper:
 		:param str country:  Two-letter country code for the store to search in.
 		                     Defaults to 'nl'.
 		:param str lang: Dummy argument for compatibility. Unused.
+		:param int timeout: Seconds to wait for response before stopping.
 
 		:return list:  List of App IDs linked to developer
 		"""
@@ -128,6 +131,7 @@ class AppStoreScraper:
 		:param str country:  Two-letter country code for the store to search in.
 		                     Defaults to 'nl'.
 		:param str lang:  Language code to search with, default 'nl'
+		:param int timeout: Seconds to wait for response before stopping.
 
 		:return list:  List of similar app IDs
 		"""
@@ -173,6 +177,7 @@ class AppStoreScraper:
 						  short time. Defaults to None.
 		:param bool force:  by-passes the server side caching by adding a timestamp
 		                    to the request (default is False)
+		:param int timeout: Seconds to wait for response before stopping.
 
 		:return dict:  App details, as returned by the app store. The result is
 		               not processed any further, unless `flatten` is True
@@ -280,6 +285,7 @@ class AppStoreScraper:
 		:param int sleep: Seconds to sleep before request to prevent being
 						  temporary blocked if there are many requests in a
 						  short time. Defaults to 1.
+		:param int timeout: Seconds to wait for response before stopping.
 
 		:return dict:  App ratings, as scraped from the app store.
 		"""

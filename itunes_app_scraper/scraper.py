@@ -94,6 +94,31 @@ class AppStoreScraper:
 
 		return [entry["id"]["attributes"]["im:id"] for entry in result["feed"]["entry"]]
 
+	def get_apps_for_developer(self, developer_id, country="nl", lang="", timeout=None):
+		"""
+		Retrieve Apps linked to given developer
+
+		:param int developer_id:  Developer ID
+		:param str country:  Two-letter country code for the store to search in.
+		                     Defaults to 'nl'.
+		:param str lang: Dummy argument for compatibility. Unused.
+		:param int timeout: Seconds to wait for response before stopping.
+
+		:return list[dict]:  List of Apps linked to developer
+		"""
+		url = "https://itunes.apple.com/lookup?id=%s&country=%s&entity=software" % (developer_id, country)
+
+		try:
+			result = requests.get(url, timeout=timeout).json()
+		except json.JSONDecodeError:
+			raise AppStoreException("Could not parse app store response")
+
+		if "results" in result:
+			return [app for app in result["results"] if app["wrapperType"] == "software"]
+		else:
+			# probably an invalid developer ID
+			return []
+
 	def get_app_ids_for_developer(self, developer_id, country="nl", lang="", timeout=None):
 		"""
 		Retrieve App IDs linked to given developer
@@ -106,18 +131,13 @@ class AppStoreScraper:
 
 		:return list:  List of App IDs linked to developer
 		"""
-		url = "https://itunes.apple.com/lookup?id=%s&country=%s&entity=software" % (developer_id, country)
-
-		try:
-			result = requests.get(url, timeout=timeout).json()
-		except json.JSONDecodeError:
-			raise AppStoreException("Could not parse app store response")
-
-		if "results" in result:
-			return [app["trackId"] for app in result["results"] if app["wrapperType"] == "software"]
+		apps = self.get_apps_for_developer(developer_id, country=country, lang=lang, timeout=timeout)
+		if len(apps) > 0:
+			app_ids =[app["trackId"] for app in apps["results"] if app["wrapperType"] == "software"] 
 		else:
-			# probably an invalid developer ID
 			return []
+		return app_ids
+		
 
 	def get_similar_app_ids_for_app(self, app_id, country="nl", lang="nl", timeout=None):
 		"""

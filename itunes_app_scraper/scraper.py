@@ -89,7 +89,6 @@ class AppStoreScraper:
 
 
 		try:
-			print(url)
 			result = requests.get(url, timeout=timeout).json()
 		except json.JSONDecodeError:
 			raise AppStoreException("Could not parse app store response")

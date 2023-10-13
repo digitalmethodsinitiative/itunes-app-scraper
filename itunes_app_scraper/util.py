@@ -25,23 +25,18 @@ class AppStoreCollections:
 	"""
 	App store collection IDs
 
-	Borrowed from https://github.com/facundoolano/app-store-scraper. These are
+	Based on https://itunes.apple.com/WebObjects/MZStoreServices.woa/ws/genres?id=6000. These are
 	the various collections displayed in the app store, usually on the front
 	page.
 	"""
-	TOP_MAC = 'topmacapps'
-	TOP_FREE_MAC = 'topfreemacapps'
-	TOP_GROSSING_MAC = 'topgrossingmacapps'
+	TOP_FREE_MAC = 'freeMacAppsV2'
 	TOP_PAID_MAC = 'toppaidmacapps'
-	NEW_IOS = 'newapplications'
-	NEW_FREE_IOS = 'newfreeapplications'
-	NEW_PAID_IOS = 'newpaidapplications'
-	TOP_FREE_IOS = 'topfreeapplications'
-	TOP_FREE_IPAD = 'topfreeipadapplications'
-	TOP_GROSSING_IOS = 'topgrossingapplications'
-	TOP_GROSSING_IPAD = 'topgrossingipadapplications'
-	TOP_PAID_IOS = 'toppaidapplications'
-	TOP_PAID_IPAD = 'toppaidipadapplications'
+	TOP_FREE_IOS = 'freeAppsV2'
+	TOP_FREE_IPAD = 'freeIpadApplications'
+	TOP_GROSSING_IOS = 'appsByRevenue'
+	TOP_GROSSING_IPAD = 'ipadAppsByRevenue'
+	TOP_PAID_IOS = 'paidApplications'
+	TOP_PAID_IPAD = 'paidIpadApplications'
 
 class AppStoreCategories:
 	"""

@@ -83,16 +83,17 @@ class AppStoreScraper:
 		if not collection:
 			collection = AppStoreCollections.TOP_FREE_IOS
 
-		country = self.get_store_id_for_country(country)
-		params = (collection, category, num, country)
-		url = "http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/ws/RSS/%s/%s/limit=%s/json?s=%s" % params
+		country = country.lower()
+		params = (country, category, collection, num)
+		url = "https://itunes.apple.com/WebObjects/MZStoreServices.woa/ws/charts?cc=%s&g=%s&name=%s&limit=%s" % params
+
 
 		try:
 			result = requests.get(url, timeout=timeout).json()
 		except json.JSONDecodeError:
 			raise AppStoreException("Could not parse app store response")
 
-		return [entry["id"]["attributes"]["im:id"] for entry in result["feed"]["entry"]]
+		return result["resultIds"]
 
 	def get_apps_for_developer(self, developer_id, country="nl", lang="", timeout=None):
 		"""

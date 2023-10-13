@@ -93,7 +93,7 @@ class AppStoreScraper:
 		except json.JSONDecodeError:
 			raise AppStoreException("Could not parse app store response")
 
-		return [entry["id"]["attributes"]["im:id"] for entry in result["feed"]["entry"]]
+		return result["resultIds"]
 
 	def get_apps_for_developer(self, developer_id, country="nl", lang="", timeout=None):
 		"""

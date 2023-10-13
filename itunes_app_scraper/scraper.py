@@ -84,11 +84,8 @@ class AppStoreScraper:
 			collection = AppStoreCollections.TOP_FREE_IOS
 
 		country = self.get_store_id_for_country(country)
-		#params = (collection, category, num, country)
-        params = (country, category, collection, num)
-		#url = "http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/ws/RSS/%s/%s/limit=%s/json?s=%s" % params
-        url = "https://itunes.apple.com/WebObjects/MZStoreServices.woa/ws/charts?cc=%s&g=%s&name=%s&limit=%s" % params
-
+		params = (country, category, collection, num)
+		url = "https://itunes.apple.com/WebObjects/MZStoreServices.woa/ws/charts?cc=%s&g=%s&name=%s&limit=%s" % params
 
 
 		try:

@@ -59,6 +59,9 @@ class AppStoreScraper:
 		except json.JSONDecodeError:
 			raise AppStoreException("Could not parse app store response")
 
+		if "bubbles" not in result or not result["bubbles"]:
+			raise AppStoreException(f"No results found for search term {term} (country {country}, lang {lang})")
+
 		return [app["id"] for app in result["bubbles"][0]["results"][:amount]]
 
 	def get_app_ids_for_collection(self, collection="", category="", num=50, country="nl", lang=""):

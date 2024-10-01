@@ -30,8 +30,8 @@ class AppStoreScraper:
 		Retrieve suggested app IDs for search query
 
 		:param str term:  Search query
-		:param int num:  Amount of items to return per page, default 50
-		:param int page:  Amount of pages to return
+		:param int|None num:  Amount of items to return per page, default 50
+		:param int|None page:  Amount of pages to return
 		:param str country:  Two-letter country code of store to search in,
 		                     default 'nl'
 		:param str lang:  Language code to search with, default 'nl'
@@ -44,7 +44,10 @@ class AppStoreScraper:
 		url = "https://search.itunes.apple.com/WebObjects/MZStore.woa/wa/search?clientApplication=Software&media=software&term="
 		url += quote_plus(term)
 
-		amount = int(num) * int(page)
+        if num is None or page is None:
+            amount = None
+        else:
+		    amount = int(num) * int(page)
 
 		country = self.get_store_id_for_country(country)
 		headers = {

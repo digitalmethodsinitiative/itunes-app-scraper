@@ -44,10 +44,10 @@ class AppStoreScraper:
 		url = "https://search.itunes.apple.com/WebObjects/MZStore.woa/wa/search?clientApplication=Software&media=software&term="
 		url += quote_plus(term)
 
-        if num is None or page is None:
-            amount = None
-        else:
-		    amount = int(num) * int(page)
+		if num is None or page is None:
+			amount = None
+		else:
+			amount = int(num) * int(page)
 
 		country = self.get_store_id_for_country(country)
 		headers = {

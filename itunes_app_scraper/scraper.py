@@ -227,9 +227,10 @@ class AppStoreScraper:
 		if flatten:
 			for field in app:
 				if isinstance(app[field], list):
-					app[field] = ",".join(app[field])
+					app[field] = ",".join([str(item) for item in app[field]])
 				elif isinstance(app[field], dict):
-					app[field] = ", ".join(["%s star: %s" % (key, value) for key,value in app[field].items()])
+					# Apparently there was only a single dict in the response of star ratings
+					app[field] = ", ".join(["%s star: %s" % (str(key), str(value)) for key,value in app[field].items()])
 
 		return app
 

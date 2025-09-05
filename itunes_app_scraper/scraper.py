@@ -25,7 +25,7 @@ class AppStoreScraper:
 	can be found at https://github.com/facundoolano/app-store-scraper.
 	"""
 
-	def get_app_ids_for_query(self, term, num=50, page=1, country="nl", lang="nl", timeout=None, timeout=None):
+	def get_app_ids_for_query(self, term, num=50, page=1, country="nl", lang="nl", timeout=None):
 		"""
 		Retrieve suggested app IDs for search query
 
@@ -102,7 +102,6 @@ class AppStoreScraper:
 		return result["resultIds"]
 
 	def get_apps_for_developer(self, developer_id, country="nl", lang="", timeout=None):
-	def get_app_ids_for_developer(self, developer_id, country="nl", lang="", timeout=None):
 		"""
 		Retrieve Apps linked to given developer
 
@@ -114,6 +113,7 @@ class AppStoreScraper:
 
 		:return list[dict]:  List of Apps linked to developer
 		"""
+		country = country.lower()
 		url = "https://itunes.apple.com/lookup?id=%s&country=%s&entity=software" % (developer_id, country)
 
 		try:

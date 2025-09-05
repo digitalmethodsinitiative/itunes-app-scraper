@@ -25,16 +25,17 @@ class AppStoreScraper:
 	can be found at https://github.com/facundoolano/app-store-scraper.
 	"""
 
-	def get_app_ids_for_query(self, term, num=50, page=1, country="nl", lang="nl"):
+	def get_app_ids_for_query(self, term, num=50, page=1, country="nl", lang="nl", timeout=None):
 		"""
 		Retrieve suggested app IDs for search query
 
 		:param str term:  Search query
-		:param int num:  Amount of items to return per page, default 50
-		:param int page:  Amount of pages to return
+		:param int|None num:  Amount of items to return per page, default 50
+		:param int|None page:  Amount of pages to return
 		:param str country:  Two-letter country code of store to search in,
 		                     default 'nl'
 		:param str lang:  Language code to search with, default 'nl'
+		:param int timeout: Seconds to wait for response before stopping.
 
 		:return list:  List of App IDs returned for search query
 		"""
@@ -44,7 +45,10 @@ class AppStoreScraper:
 		url = "https://search.itunes.apple.com/WebObjects/MZStore.woa/wa/search?clientApplication=Software&media=software&term="
 		url += quote_plus(term)
 
-		amount = int(num) * int(page)
+		if num is None or page is None:
+			amount = None
+		else:
+			amount = int(num) * int(page)
 
 		country = self.get_store_id_for_country(country)
 		headers = {
@@ -53,7 +57,7 @@ class AppStoreScraper:
 		}
 
 		try:
-			result = requests.get(url, headers=headers).json()
+			result = requests.get(url, headers=headers, timeout=timeout).json()
 		except ConnectionError as ce:
 			raise AppStoreException("Cannot connect to store: {0}".format(str(ce)))
 		except json.JSONDecodeError:
@@ -64,7 +68,7 @@ class AppStoreScraper:
 
 		return [app["id"] for app in result["bubbles"][0]["results"][:amount]]
 
-	def get_app_ids_for_collection(self, collection="", category="", num=50, country="nl", lang=""):
+	def get_app_ids_for_collection(self, collection="", category="", num=50, country="nl", lang="", timeout=None):
 		"""
 		Retrieve app IDs in given App Store collection
 
@@ -78,6 +82,7 @@ class AppStoreScraper:
 		:param str country:  Two-letter country code for the store to search in.
 		                     Defaults to 'nl'.
 		:param str lang: Dummy argument for compatibility. Unused.
+		:param int timeout: Seconds to wait for response before stopping.
 
 		:return:  List of App IDs in collection.
 		"""
@@ -89,13 +94,13 @@ class AppStoreScraper:
 		url = "http://ax.itunes.apple.com/WebObjects/MZStoreServices.woa/ws/RSS/%s/%s/limit=%s/json?s=%s" % params
 
 		try:
-			result = requests.get(url).json()
+			result = requests.get(url, timeout=timeout).json()
 		except json.JSONDecodeError:
 			raise AppStoreException("Could not parse app store response")
 
 		return [entry["id"]["attributes"]["im:id"] for entry in result["feed"]["entry"]]
 
-	def get_app_ids_for_developer(self, developer_id, country="nl", lang=""):
+	def get_app_ids_for_developer(self, developer_id, country="nl", lang="", timeout=None):
 		"""
 		Retrieve App IDs linked to given developer
 
@@ -103,13 +108,14 @@ class AppStoreScraper:
 		:param str country:  Two-letter country code for the store to search in.
 		                     Defaults to 'nl'.
 		:param str lang: Dummy argument for compatibility. Unused.
+		:param int timeout: Seconds to wait for response before stopping.
 
 		:return list:  List of App IDs linked to developer
 		"""
 		url = "https://itunes.apple.com/lookup?id=%s&country=%s&entity=software" % (developer_id, country)
 
 		try:
-			result = requests.get(url).json()
+			result = requests.get(url, timeout=timeout).json()
 		except json.JSONDecodeError:
 			raise AppStoreException("Could not parse app store response")
 
@@ -119,7 +125,7 @@ class AppStoreScraper:
 			# probably an invalid developer ID
 			return []
 
-	def get_similar_app_ids_for_app(self, app_id, country="nl", lang="nl"):
+	def get_similar_app_ids_for_app(self, app_id, country="nl", lang="nl", timeout=None):
 		"""
 		Retrieve list of App IDs of apps similar to given app
 
@@ -131,6 +137,7 @@ class AppStoreScraper:
 		:param str country:  Two-letter country code for the store to search in.
 		                     Defaults to 'nl'.
 		:param str lang:  Language code to search with, default 'nl'
+		:param int timeout: Seconds to wait for response before stopping.
 
 		:return list:  List of similar app IDs
 		"""
@@ -142,7 +149,7 @@ class AppStoreScraper:
 			"Accept-Language": lang
 		}
 
-		result = requests.get(url, headers=headers).text
+		result = requests.get(url, headers=headers, timeout=timeout).text
 		if "customersAlsoBoughtApps" not in result:
 			return []
 
@@ -157,7 +164,7 @@ class AppStoreScraper:
 
 		return ids
 
-	def get_app_details(self, app_id, country="nl", lang="", add_ratings=False, flatten=True, sleep=None, force=False):
+	def get_app_details(self, app_id, country="nl", lang="", add_ratings=False, flatten=True, sleep=None, force=False, timeout=None):
 		"""
 		Get app details for given app ID
 
@@ -176,6 +183,7 @@ class AppStoreScraper:
 						  short time. Defaults to None.
 		:param bool force:  by-passes the server side caching by adding a timestamp
 		                    to the request (default is False)
+		:param int timeout: Seconds to wait for response before stopping.
 
 		:return dict:  App details, as returned by the app store. The result is
 		               not processed any further, unless `flatten` is True
@@ -197,13 +205,13 @@ class AppStoreScraper:
 		try:
 			if sleep is not None:
 				time.sleep(sleep)
-			result = requests.get(url).json()
+			result = requests.get(url, timeout=timeout).json()
 		except Exception:
 			try:
 				# handle the retry here.
 				# Take an extra sleep as back off and then retry the URL once.
 				time.sleep(2)
-				result = requests.get(url).json()
+				result = requests.get(url, timeout=timeout).json()
 			except Exception:
 				raise AppStoreException("Could not parse app store response for ID %s" % app_id)
 
@@ -272,7 +280,7 @@ class AppStoreScraper:
 		else:
 			raise AppStoreException("Country code not found for {0}".format(country))
 
-	def get_app_ratings(self, app_id, countries=None, sleep=1):
+	def get_app_ratings(self, app_id, countries=None, sleep=1, timeout=None):
 		"""
 		Get app ratings for given app ID
 
@@ -284,6 +292,7 @@ class AppStoreScraper:
 		:param int sleep: Seconds to sleep before request to prevent being
 						  temporary blocked if there are many requests in a
 						  short time. Defaults to 1.
+		:param int timeout: Seconds to wait for response before stopping.
 
 		:return dict:  App ratings, as scraped from the app store.
 		"""
@@ -303,13 +312,13 @@ class AppStoreScraper:
 			try:
 				if sleep is not None:
 					time.sleep(sleep)
-				result = requests.get(url, headers=headers).text
+				result = requests.get(url, headers=headers, timeout=timeout).text
 			except Exception:
 				try:
 					# handle the retry here.
 					# Take an extra sleep as back off and then retry the URL once.
 					time.sleep(2)
-					result = requests.get(url, headers=headers).text
+					result = requests.get(url, headers=headers, timeout=timeout).text
 				except Exception:
 					raise AppStoreException("Could not parse app store rating response for ID %s" % app_id)
 

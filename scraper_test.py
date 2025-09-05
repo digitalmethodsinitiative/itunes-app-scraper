@@ -59,3 +59,8 @@ def test_query_multiple_pages():
             [results.add(x) for x in page_results]
             assert len(results) > (page-1)*50
     print(f"Total results for query {query}: {len(results)}")
+
+def test_get_app_ids_for_collection():
+    scraper = AppStoreScraper()
+    results = scraper.get_app_ids_for_collection(AppStoreCollections.TOP_FREE_IOS, country="us", lang="en")
+    assert len(results) > 0

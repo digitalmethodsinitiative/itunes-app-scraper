@@ -4,3 +4,7 @@ __pycache__
 .pytest_cache
 log/*
 .idea/
+
+build/
+dist/
+*.egg-info/

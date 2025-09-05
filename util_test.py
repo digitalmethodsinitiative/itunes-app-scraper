@@ -15,7 +15,7 @@ def test_category_does_not_exist():
 
 def test_collection_exists():
     collection = AppStoreCollections()
-    assert collection.NEW_IOS == 'newapplications'
+    assert collection.TOP_FREE_IOS == 'freeAppsV2'
 
 def test_collection_does_not_exist():
     collection = AppStoreCollections()
@@ -24,5 +24,5 @@ def test_collection_does_not_exist():
 
 def test_app_utils():
     utils = AppStoreUtils()
-    json_object = json.loads(utils.get_entries(AppStoreCollections()))
-    assert "names" in json_object
+    collections = utils.get_entries(AppStoreCollections())
+    assert "TOP_FREE_IOS" in collections

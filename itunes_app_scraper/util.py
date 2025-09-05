@@ -5,21 +5,21 @@ import json
 
 class AppStoreUtils:
 	"""
-		Helper class to access the names of the other classes
+	Helper class to access the names of the other classes
 	"""
-
-	def get_entries(self, clazz_name):
+	@staticmethod
+	def get_entries(clazz_name):
 		"""
-			Get the members and their names from the function
+		Get the members and their names from the function
 
-			:param object clazz_name: the class object be called. 
-			:returns object method_names: a JSON representation of the names.
+		:param object clazz_name: the class object be called. 
+		:returns object method_names: a JSON representation of the names.
 		"""
-		method_names  = {}
+		methods  = {}
 		for collection in dir(clazz_name):
 			if not collection.startswith('__'):
-				method_names[str(collection.replace('_', ' '))] = getattr(clazz_name, str(collection))
-		return json.dumps({'names': method_names})
+				methods[str(collection)] = getattr(clazz_name, str(collection))
+		return methods
 
 class AppStoreCollections:
 	"""

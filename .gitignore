@@ -3,3 +3,8 @@ itunes_app_scraper/__pycache__
 __pycache__
 .pytest_cache
 log/*
+.idea/
+
+build/
+dist/
+*.egg-info/

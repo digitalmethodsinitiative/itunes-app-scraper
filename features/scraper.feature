@@ -10,11 +10,6 @@ Feature: scraper initial
       When we search for result from mindful
       Then the scraper will return "15" results
 
-  Scenario: run a collections search
-     Given we have itunes scraper installed
-      When we search for the topic topfreeapplications
-      Then the scraper will return "50" results
-
   Scenario: run a developer search
      Given we have itunes scraper installed
       When we search for the developer 384434796

@@ -141,7 +141,7 @@ class AppStoreScraper:
 		"""
 		apps = self.get_apps_for_developer(developer_id, country=country, lang=lang, timeout=timeout)
 		if len(apps) > 0:
-			app_ids =[app["trackId"] for app in apps if app["wrapperType"] == "software"] 
+			app_ids =[app["trackId"] for app in apps["results"] if app["wrapperType"] == "software"] 
 		else:
 			return []
 		return app_ids
